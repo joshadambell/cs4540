@@ -1,0 +1,2 @@
+serviceClass: tdl.client.ListService
+path: 0688ABE916EE185E0F27AC3C36B91DF1.gwt.rpc
