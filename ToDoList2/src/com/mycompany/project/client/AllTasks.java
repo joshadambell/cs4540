@@ -15,6 +15,7 @@
 package com.mycompany.project.client;
 
 
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -26,7 +27,6 @@ import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.view.client.ListDataProvider;
 
-import tdl.client.Task;
 
 
 /**
@@ -34,37 +34,49 @@ import tdl.client.Task;
  */
 public class AllTasks implements EntryPoint {
 	
-		  public void onModuleLoad() {
+		public void onModuleLoad() {
 			  
 			 List<Task> contacts = new ArrayList<Task>();
-			 contacts.add(new Task("josh", "Address"));
-			 contacts.add(new Task("tay", "Address2"));
+			 contacts.add(new Task("josh", "Address", new Date(0)));
+			 contacts.add(new Task("tay", "Address2", new Date(0)));
 
 		    // Create a CellTable.
 		    CellTable<Task> table = new CellTable<Task>();
 
 		    // Create name column.
-		    TextColumn<Task> nameColumn = new TextColumn<Task>() {
+		    TextColumn<Task> emailColumn = new TextColumn<Task>() {
 		      @Override
-		      public String getValue(Task contact) {
-		        return contact.name;
+		      public String getValue(Task task) {
+		        return task.getKey();
 		      }
 		    };
 
-		    // Make the name column sortable.
-		    nameColumn.setSortable(true);
+		    
 
 		    // Create address column.
-		    TextColumn<Task> addressColumn = new TextColumn<Task>() {
+		    TextColumn<Task> nameColumn = new TextColumn<Task>() {
 		      @Override
-		      public String getValue(Task contact) {
-		        return contact.address;
+		      public String getValue(Task task) {
+		        return task.getName();
 		      }
 		    };
+		    
+		 // Create address column.
+		    TextColumn<Task> dateColumn = new TextColumn<Task>() {
+		      @Override
+		      public String getValue(Task task) {
+		        return task.getDate();
+		      }
+		    };
+		    
+		 // Make the name column sortable.
+		    nameColumn.setSortable(true);
+		    dateColumn.setSortable(true);
 
 		    // Add the columns.
+		    table.addColumn(emailColumn, "Email");
 		    table.addColumn(nameColumn, "Name");
-		    table.addColumn(addressColumn, "Address");
+		    table.addColumn(dateColumn, "Date");
 
 		    // Create a data provider.
 		    ListDataProvider<Task> dataProvider = new ListDataProvider<Task>();
@@ -92,7 +104,7 @@ public class AllTasks implements EntryPoint {
 
 		            // Compare the name columns.
 		            if (o1 != null) {
-		              return (o2 != null) ? o1.name.compareTo(o2.name) : 1;
+		              return (o2 != null) ? o1.getName().compareTo(o2.getName()) : 1;
 		            }
 		            return -1;
 		          }
