@@ -1,2 +1,3 @@
 # Module tdl.ToDoList
 # RPC service class, partial path of RPC policy file
+tdl.client.ListService, E0E9EEFEE97E0FC4842AFADBED6A539D.gwt.rpc

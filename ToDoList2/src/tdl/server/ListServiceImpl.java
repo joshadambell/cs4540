@@ -74,7 +74,8 @@ public class ListServiceImpl extends RemoteServiceServlet implements ListService
 			for (Entity e: allTasks) {
 				tasks.add(new Task(KeyFactory.keyToString(e.getKey()), 
 						           (String)e.getProperty("task"),
-						           (Date)e.getProperty("date")));
+						           (Date)e.getProperty("date"),
+						           (String)e.getProperty("email")));
 			}
 			
 			// Commit the transactions and return the list.
@@ -96,6 +97,11 @@ public class ListServiceImpl extends RemoteServiceServlet implements ListService
 	@Override
 	public Task addTask(String task, Date date) {
 		
+		// Get user information
+				UserService userService = UserServiceFactory.getUserService();
+				User user = userService.getCurrentUser();
+				String email = user.getEmail();
+		
 		Transaction txn = null;
 		try {
 			
@@ -107,13 +113,14 @@ public class ListServiceImpl extends RemoteServiceServlet implements ListService
 			Entity t = new Entity("Task", tasklist.getKey());
 			t.setProperty("task", task);
 			t.setProperty("date", date);
+			t.setProperty("email", email);
 			
 			// Put it in the datastore and commit the transaction
 			datastore.put(t);
 			txn.commit();
 			
 			// Create and return the Task object
-			return new Task(KeyFactory.keyToString(t.getKey()), task, date);
+			return new Task(KeyFactory.keyToString(t.getKey()), task, date, email);
 		}
 		finally {
 			if (txn.isActive()) {

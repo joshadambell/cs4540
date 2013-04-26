@@ -12,11 +12,13 @@ public class Task implements Serializable {
 	private String key;
 	private String name;
 	private Date date;
+	private String email;
 	
-	public Task(String key, String name, Date date) {
+	public Task(String key, String name, Date date, String email) {
 		this.key = key;
 		this.name = name;
 		this.date = date;
+		this.email = email;
 	}
 	
 	public Task () {
@@ -31,6 +33,9 @@ public class Task implements Serializable {
 	public String getDate () {
 		return (date == null) ? "" : date.toString();
 	}
+	public String getEmail() {
+		return email;
+	}
 
 	public void setKey(String key) {
 		this.key = key;
@@ -42,6 +47,9 @@ public class Task implements Serializable {
 	
 	public void setDate (Date date) {
 		this.date = date;
+	}
+	public void setEmail (String email) {
+		this.email = email;
 	}
 	
 

@@ -63,6 +63,9 @@ public class ToDoList implements EntryPoint {
 		});
 	}
 	
+	/**
+	 * @wbp.parser.entryPoint
+	 */
 	private void displayApp () {
 
 		// Lay out the root panel with a vertical panel
@@ -157,20 +160,16 @@ public class ToDoList implements EntryPoint {
 		horizontalPanel.add(dateBox);
 		dateBox.setWidth("107px");
 		horizontalPanel.add(btnAdd);
-
-		HorizontalPanel horizontalPanel_1 = new HorizontalPanel();
-		verticalPanel.add(horizontalPanel_1);
-		horizontalPanel_1.setWidth("282px");
 		
 		Anchor logout = new Anchor(true);
-		horizontalPanel_1.add(logout);
+		logout.setText("Logout");
+		verticalPanel.add(logout);
 		logout.setHTML("Logout");
 		logout.setHref(userinfo.getLogoutURL());
 		
-		Anchor task = new Anchor(true);
-		horizontalPanel_1.add(task);
-		logout.setHTML("AllTasks");
-		logout.setHref("AllTasks.html?gwt.codesvr=127.0.0.1:9997");
+		Anchor tasks = new Anchor("AllTasks");
+		verticalPanel.add(tasks);
+		tasks.setHref("AllTasks.html?gwt.codesvr=127.0.0.1:9997");
 		
 	}
 

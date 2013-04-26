@@ -14,19 +14,21 @@
  *******************************************************************************/
 package com.mycompany.project.client;
 
-
-import java.sql.Date;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
 import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.TextColumn;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Anchor;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.view.client.ListDataProvider;
-
 
 
 /**
@@ -34,27 +36,49 @@ import com.google.gwt.view.client.ListDataProvider;
  */
 public class AllTasks implements EntryPoint {
 	
+	private AllTasksServiceAsync server; 
+	
 		public void onModuleLoad() {
 			  
-			 List<Task> contacts = new ArrayList<Task>();
-			 contacts.add(new Task("josh", "Address", new Date(0)));
-			 contacts.add(new Task("tay", "Address2", new Date(0)));
+			// Create the server proxy
+			server = AllTasksService.Util.getInstance();
+			
+			// Get the tasks from the server.  Record then and add them to the 
+			// flex table.
+			server.getTasks(new AsyncCallback<List<Task>>() {
 
-		    // Create a CellTable.
+				@Override
+				public void onFailure(Throwable caught) {
+					Window.alert(caught.toString());
+				}
+
+				@Override
+				public void onSuccess(List<Task> t) {
+					buildTable(t);
+				}
+			});	 
+	}
+		/**
+		 * @wbp.parser.entryPoint
+		 */
+		private void buildTable(final List<Task> list) {
+			
+			 // Create a CellTable.
 		    CellTable<Task> table = new CellTable<Task>();
 
 		    // Create name column.
 		    TextColumn<Task> emailColumn = new TextColumn<Task>() {
 		      @Override
 		      public String getValue(Task task) {
-		        return task.getKey();
+		        return task.getEmail();
 		      }
 		    };
 
-		    
+		    // Make the name column sortable.
+		    emailColumn.setSortable(true);
 
 		    // Create address column.
-		    TextColumn<Task> nameColumn = new TextColumn<Task>() {
+		    TextColumn<Task> taskColumn = new TextColumn<Task>() {
 		      @Override
 		      public String getValue(Task task) {
 		        return task.getName();
@@ -69,13 +93,11 @@ public class AllTasks implements EntryPoint {
 		      }
 		    };
 		    
-		 // Make the name column sortable.
-		    nameColumn.setSortable(true);
 		    dateColumn.setSortable(true);
 
 		    // Add the columns.
 		    table.addColumn(emailColumn, "Email");
-		    table.addColumn(nameColumn, "Name");
+		    table.addColumn(taskColumn, "Task");
 		    table.addColumn(dateColumn, "Date");
 
 		    // Create a data provider.
@@ -86,16 +108,16 @@ public class AllTasks implements EntryPoint {
 
 		    // Add the data to the data provider, which automatically pushes it to the
 		    // widget.
-		    List<Task> list = dataProvider.getList();
-		    for (Task contact : contacts) {
-		      list.add(contact);
+		    List<Task> dplist = dataProvider.getList();
+		    for (Task task : list) {
+		      dplist.add(task);
 		    }
 
 		    // Add a ColumnSortEvent.ListHandler to connect sorting to the
 		    // java.util.List.
-		    ListHandler<Task> columnSortHandler = new ListHandler<Task>(
+		   ListHandler<Task> columnSortHandler = new ListHandler<Task>(
 		        list);
-		    columnSortHandler.setComparator(nameColumn,
+		    columnSortHandler.setComparator(emailColumn,
 		        new Comparator<Task>() {
 		          public int compare(Task o1, Task o2) {
 		            if (o1 == o2) {
@@ -104,18 +126,48 @@ public class AllTasks implements EntryPoint {
 
 		            // Compare the name columns.
 		            if (o1 != null) {
-		              return (o2 != null) ? o1.getName().compareTo(o2.getName()) : 1;
+		              return (o2 != null) ? o1.getEmail().compareTo(o2.getEmail()) : 1;
 		            }
 		            return -1;
 		          }
 		        });
+
 		    table.addColumnSortHandler(columnSortHandler);
 
 		    // We know that the data is sorted alphabetically by default.
-		    table.getColumnSortList().push(nameColumn);
+		    table.getColumnSortList().push(emailColumn);
+		    
 
 		    // Add it to the root panel.
-		    RootPanel.get().add(table);
-		  }
+		    RootPanel rootPanel = RootPanel.get();
+		    rootPanel.add(table);
+		    
+		    Button btnNewButton = new Button("New button");
+		    btnNewButton.setText("Sort by Email");
+		    rootPanel.add(btnNewButton, 0, 225);
+		    
+		    Button btnNewButton_1 = new Button("New button");
+		    btnNewButton_1.setText("Sort by Date");
+		    rootPanel.add(btnNewButton_1, 118, 225);
+		    
+		    Anchor hprlnkNewHyperlink = new Anchor("ToDoList");
+		    hprlnkNewHyperlink.setHref("ToDoList.html?gwt.codesvr=127.0.0.1:9997");
+		    rootPanel.add(hprlnkNewHyperlink, 5, 275);
+		    
+		    btnNewButton.addClickHandler(new ClickHandler() {
+				
+				public void onClick(ClickEvent event) {
+					Window.Location.reload();
 
-	}
+					};
+			});
+		    
+		    btnNewButton_1.addClickHandler(new ClickHandler() {
+				
+				public void onClick(ClickEvent event) {
+					Window.Location.reload();
+
+					};
+			});
+		  }
+}

@@ -1,0 +1,2 @@
+serviceClass: com.mycompany.project.client.AllTasksService
+path: E0CC3ED8AF34D4B8D240005F0F087F87.gwt.rpc
